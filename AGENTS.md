@@ -83,3 +83,7 @@ Avoid unnecessary FP abstraction
 
 The goal is:
 simple, readable, functional code that emphasizes composability and purity without overengineering.
+
+- Do not add code comments
+
+- Do not write defensive code
