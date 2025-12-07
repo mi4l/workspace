@@ -1,12 +1,16 @@
+import { useEffect, useMemo } from "react";
 import "./App.css";
+import { createAppController } from "./core/AppController";
+import AppLayout from "./ui/AppLayout";
 
-const App = () => (
-  <div className="app">
-    <header className="app__header">
-      <p className="app__title">Hello world</p>
-      <p className="app__subtitle">Tauri + React + TypeScript starter</p>
-    </header>
-  </div>
-);
+const App = () => {
+  const controller = useMemo(() => createAppController(), []);
+
+  useEffect(() => {
+    controller.bootstrap();
+  }, [controller]);
+
+  return <AppLayout controller={controller} />;
+};
 
 export default App;
