@@ -7,4 +7,7 @@ export default defineConfig({
     strictPort: true,
   },
   clearScreen: false,
+  test: {
+    globals: true,
+  },
 });

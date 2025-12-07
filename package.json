@@ -12,6 +12,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "oxlint --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "format": "prettier --check .",
@@ -35,7 +37,8 @@
     "oxlint": "^0.11.0",
     "prettier": "^3.3.3",
     "typescript": "^5.9.3",
-    "vite": "^5.4.21"
+    "vite": "^5.4.21",
+    "vitest": "^4.0.15"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "oxlint --max-warnings 0",
