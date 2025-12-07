@@ -9,7 +9,12 @@
   justify-content: center;
   background: radial-gradient(circle at 25% 25%, #1e1e2f, #0f0f17 45%);
   color: #f7f7ff;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
   text-align: center;
 }
 
