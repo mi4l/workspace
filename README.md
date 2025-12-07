@@ -19,17 +19,12 @@ A Tauri + React + TypeScript desktop app that delivers a Confluence-style editin
 - The first adapter targets the local filesystem; future adapters can point to S3, databases, or SaaS APIs.
 - Cloud support will be additive—UI and Application Core stay unchanged when swapping providers.
 
-## Getting Started (placeholder)
-```bash
-# Install dependencies (placeholder)
-npm install
-
-# Run desktop app in dev (placeholder)
-npm run tauri dev
-
-# Run web UI preview (placeholder)
-npm run dev
-```
+## Getting Started
+- Tooling: Tauri 2.x toolchain with pnpm-first workflow (v10); npm/yarn are not used and `package-lock.json` is ignored.
+- Install dependencies: `pnpm install`
+- Run the desktop app in dev (opens Tauri window): `pnpm tauri:dev`
+- Build the desktop app: `pnpm tauri:build`
+- Preview the web UI only: `pnpm dev` (opens the Vite dev server)
 
 ## Project Structure (indicative)
 - `src-tauri/` – Tauri shell (Rust) for window lifecycle, secure IPC, and native capabilities.

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "TauriReactApp",
+  "version": "0.1.0",
+  "identifier": "com.example.taurireactapp",
+  "build": {
+    "beforeBuildCommand": "pnpm build",
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Tauri React App",
+        "width": 960,
+        "height": 640,
+        "resizable": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "icon": []
+  }
+}
