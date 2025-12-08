@@ -1,43 +1,89 @@
-import type { StorageProvider } from "../../core/storage/StorageProvider";
+import type {
+  DocumentModel,
+  FolderMeta,
+  StorageProvider,
+} from "../../core/storage/StorageProvider";
 
-type MemoryStore = Readonly<Record<string, unknown>>;
+type WorkspaceState = {
+  documents: Map<string, DocumentModel>;
+  folders: Map<string, FolderMeta>;
+};
 
-const readKey =
-  <T>(key: string) =>
-  (state: MemoryStore): T | null =>
-    Object.hasOwn(state, key) ? (state[key] as T) : null;
+type Store = Map<string, WorkspaceState>;
 
-const writeKey =
-  <T>(key: string, value: T) =>
-  (state: MemoryStore): MemoryStore => ({ ...state, [key]: value });
+const createWorkspaceState = (): WorkspaceState => ({
+  documents: new Map(),
+  folders: new Map(),
+});
 
-const dropKey =
-  (key: string) =>
-  (state: MemoryStore): MemoryStore =>
-    Object.fromEntries(Object.entries(state).filter(([candidate]) => candidate !== key));
+const selectWorkspace = (store: Store, workspaceId: string): WorkspaceState => {
+  const existing = store.get(workspaceId);
+  if (existing) return existing;
+  const created = createWorkspaceState();
+  store.set(workspaceId, created);
+  return created;
+};
 
-const listKeys = (state: MemoryStore): readonly string[] => Object.keys(state);
+const createFolderId = (): string => Math.random().toString(36).slice(2);
 
-const createInMemoryStorageProvider = (initialStore: MemoryStore = {}): StorageProvider => {
-  let store = initialStore;
+const derivePath = (parent: FolderMeta | undefined, name: string) =>
+  parent?.path ? `${parent.path}/${name}` : name;
 
-  const load: StorageProvider["load"] = <T>(key: string) => Promise.resolve(readKey<T>(key)(store));
+const createInMemoryStorageProvider = (): StorageProvider => {
+  const store: Store = new Map();
 
-  const save: StorageProvider["save"] = async (key, value) => {
-    store = writeKey(key, value)(store);
+  const listDocuments: StorageProvider["listDocuments"] = async (workspaceId) => {
+    const workspace = selectWorkspace(store, workspaceId);
+    return Array.from(workspace.documents.values());
   };
 
-  const remove: StorageProvider["remove"] = async (key) => {
-    store = dropKey(key)(store);
+  const readDocument: StorageProvider["readDocument"] = async (workspaceId, docId) => {
+    const workspace = selectWorkspace(store, workspaceId);
+    return workspace.documents.get(docId) ?? null;
   };
 
-  const list: StorageProvider["listKeys"] = async () => listKeys(store);
+  const writeDocument: StorageProvider["writeDocument"] = async (workspaceId, doc) => {
+    const workspace = selectWorkspace(store, workspaceId);
+    workspace.documents.set(doc.id, doc);
+  };
+
+  const deleteDocument: StorageProvider["deleteDocument"] = async (workspaceId, docId) => {
+    const workspace = selectWorkspace(store, workspaceId);
+    workspace.documents.delete(docId);
+  };
+
+  const listFolders: StorageProvider["listFolders"] = async (workspaceId) => {
+    const workspace = selectWorkspace(store, workspaceId);
+    return Array.from(workspace.folders.values());
+  };
+
+  const createFolder: StorageProvider["createFolder"] = async (workspaceId, parentId, name) => {
+    const workspace = selectWorkspace(store, workspaceId);
+    const parent = parentId ? workspace.folders.get(parentId) : undefined;
+    const path = derivePath(parent, name);
+    const folder: FolderMeta = {
+      id: createFolderId(),
+      name,
+      parentId,
+      path,
+    };
+    workspace.folders.set(folder.id, folder);
+    return folder;
+  };
+
+  const deleteFolder: StorageProvider["deleteFolder"] = async (workspaceId, folderId) => {
+    const workspace = selectWorkspace(store, workspaceId);
+    workspace.folders.delete(folderId);
+  };
 
   return {
-    load,
-    save,
-    remove,
-    listKeys: list,
+    listDocuments,
+    readDocument,
+    writeDocument,
+    deleteDocument,
+    listFolders,
+    createFolder,
+    deleteFolder,
   };
 };
 

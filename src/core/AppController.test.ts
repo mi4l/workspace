@@ -2,10 +2,18 @@ import { createAppController } from "./AppController";
 import type { StorageProvider } from "./storage/StorageProvider";
 
 const createStubStorage = (): StorageProvider => ({
-  load: async () => null,
-  save: async () => {},
-  remove: async () => {},
-  listKeys: async () => [],
+  listDocuments: async () => [],
+  readDocument: async () => null,
+  writeDocument: async () => {},
+  deleteDocument: async () => {},
+  listFolders: async () => [],
+  createFolder: async (_workspaceId, parentId, name) => ({
+    id: "folder-id",
+    name,
+    parentId,
+    path: name,
+  }),
+  deleteFolder: async () => {},
 });
 
 describe("createAppController", () => {
